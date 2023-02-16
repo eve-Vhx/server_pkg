@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import rospy
-from msg_pkg.srv import masterConnect
+from msg_pkg.srv import masterConnect, masterConnectResponse
 
 class ClientConnect():
 
