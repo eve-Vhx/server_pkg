@@ -22,6 +22,6 @@ class ServerActionClient():
         self.action_client_obj.send_goal(self.init_goal)
         self.action_client_obj.wait_for_result()
         print("Result for the action server")
-        print(self.action_client_obj.get_result())
+        print(self.action_client_obj.get_result().)
 
         
