@@ -12,7 +12,7 @@ class ClientConnect:
     def handle_connect_cb(self, req):
         print("recieved a pi!")
         print(req.id)
-        server_action_client = ServerActionClient()
+        server_action_client = ServerActionClient('QROW1')
         return masterConnectResponse(True)
 
 
