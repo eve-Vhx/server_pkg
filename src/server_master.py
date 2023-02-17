@@ -11,6 +11,7 @@ class ClientConnect:
     def handle_connect_cb(self, req):
         print("recieved a pi!")
         print(req.id)
+        return masterConnectResponse(True)
 
 
 
