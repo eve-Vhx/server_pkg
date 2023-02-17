@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import rospy
 from msg_pkg.srv import masterConnect, masterConnectResponse
+from action_client import ServerActionClient
 
 class ClientConnect:
 
@@ -11,6 +12,7 @@ class ClientConnect:
     def handle_connect_cb(self, req):
         print("recieved a pi!")
         print(req.id)
+        server_action_client = ServerActionClient()
         return masterConnectResponse(True)
 
 
