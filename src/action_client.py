@@ -18,7 +18,7 @@ class ServerActionClient():
         return self.action_client_obj.wait_for_server(timeout = rospy.Duration(5.0))
 
     def sendInitialGoal(self):
-        self.init_goal = server_px4_reqGoal(lat=0, lon=0, alt=0, yaw_rad=0, cruise_alt=0, mission_type=9, timestamp=rospy.Time.now())
+        self.init_goal = server_px4_reqGoal(lat=0, lon=0, alt=0, yaw_rad=0, cruise_alt=0, mission_type=9)
         self.action_client_obj.send_goal(self.init_goal)
         self.action_client_obj.wait_for_result()
         print("Result for the action server")
