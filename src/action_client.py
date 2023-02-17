@@ -17,7 +17,7 @@ class ServerActionClient():
             self.sendGoal()
         else:
             print("Could not connect to the action server for " + mission_request[4])
-            self.mission_feedback = 1
+            self.mission_feedback.feedback = 1
             self.mission_feedback_pub.publish(self.mission_feedback)
     
     def initialConnectPi(self):
