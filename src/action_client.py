@@ -7,3 +7,4 @@ class ServerActionClient():
 
     def __init__(self):
         self.action_client_obj = actionlib.SimpleActionClient('/mavros/smr_px4_command/d1_cmd_action', server_px4_reqAction)
+        print("Successfully started the action client")
