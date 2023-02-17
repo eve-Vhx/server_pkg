@@ -16,7 +16,9 @@ class ClientConnect:
         print("recieved a pi!")
         print(req.id)
         self.drone_master_array.append(req.id)
-        self.drone_master_list_pub.publish(self.drone_master_array)
+        ui_master_list = droneMasterList()
+        ui_master_list.drone_master_list = self.drone_master_array
+        self.drone_master_list_pub.publish(ui_master_list)
         #server_action_client = ServerActionClient(req.id)
         return masterConnectResponse(True)
 
