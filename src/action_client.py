@@ -11,5 +11,5 @@ class ServerActionClient():
         self.initialConnectPi()
     
     def initialConnectPi(self):
-        self.action_client_obj.wait_for_server(timeout = rospy.Duration(5.0))
+        self.action_client_obj.wait_for_server(timeout = rospy.Duration(20.0))
         print("connected to the server")
