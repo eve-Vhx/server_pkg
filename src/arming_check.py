@@ -6,15 +6,14 @@ from msg_pkg.msg import armingMsg
 
 class ServerArmingCheck:
 
-    self.connections_status = {
+    def __init__(self, drone_id, request_arming):
+        self.connections_status = {
             "px4": False,
             "mavros": False,
             "wifi": False,
             "lte": False,
             "ros_timestamp": 0
         }
-
-    def __init__(self, drone_id, request_arming):
         self.drone_id = drone_id
         self.request_arming = request_arming
         self.arming_feedback_pub = rospy.Publisher(drone_id + 'arming_feedback', feedbackMsg, queue_size=10)
