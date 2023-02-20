@@ -19,22 +19,20 @@ class ClientConnect:
         print("Server connect service started!")
 
     def handle_connect_cb(self, req):
-        print("recieved a pi!")
-        print(req.id)
+        print("Server recieved a new Rpi. 001:0") #publish to server_master_feedback code: 0 drone_id: 
         self.drone_master_array.append(req.id)
         ui_master_list = droneMasterList()
         ui_master_list.drone_master_list = self.drone_master_array
         self.drone_master_list_pub.publish(ui_master_list)
-        #server_action_client = ServerActionClient(req.id)
         return masterConnectResponse(True)
 
     def handle_ui_mission_cb(self, req):
-        print("UI has asked for a mission request")
+        print("UI has asked for a mission request") #publish to server_master_feedback code: 1 drone_id
         self.mission_request = [req.lat, req.lon, req.alt, req.cruise_alt, req.drone_id]
         server_action_client = ServerActionClient(self.mission_request)
 
     def handle_ui_arming_cb(self, req):
-        print("UI has asked for drone to be armed")
+        print("UI has asked for drone to be armed") #publish to server_master_feedback code: 2 drone_id
         server_arming_check = ServerArmingCheck(req.drone_id, req.request_arming)
 
 
