@@ -35,7 +35,7 @@ class ArmingCheck:
 
 
     def run_arming_check(self):
-        while(!rospy.is_shutdown()):
+        while(not rospy.is_shutdown()):
             if (self.run_connection_checks()):
                 if (self.request_arming == True):
                     self.arming_state.armed = True
