@@ -46,16 +46,15 @@ class ServerArmingCheck:
             if (self.run_connection_checks()):
                 if (self.request_arming == True):
                     self.arming_state.armed = True
-                    self.arming_state.timestamp = rospy.Time.now().secs
-                    self.arming_pub.publish(self.arming_state)
                 else:
                     self.arming_state.armed = False
-                    self.arming_state.timestamp = rospy.Time.now().secs
-                    self.arming_pub.publish(self.arming_state)
             else:
                 self.arming_state.armed = False
-                self.arming_state.timestamp = rospy.Time.now().secs
-                self.arming_pub.publish(self.arming_state)
+            
+            self.arming_state.timestamp = rospy.Time.now().secs
+            self.arming_pub.publish(self.arming_state)
+
+            rospy.sleep(1)
 
 
 
