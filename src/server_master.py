@@ -5,6 +5,7 @@ from msg_pkg.srv import UiReq, UiReqResponse
 from msg_pkg.srv import UiArmReq, UiArmReqResponse
 from msg_pkg.msg import droneMasterList
 from action_client import ServerActionClient
+from arming_check import ServerArmingCheck
 
 class ClientConnect:
 
