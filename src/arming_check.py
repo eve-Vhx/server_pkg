@@ -4,7 +4,7 @@ from msg_pkg.msg import feedbackMsg
 from msg_pkg.msg import connections_drone
 from msg_pkg.msg import armingMsg
 
-class ArmingCheck:
+class ServerArmingCheck:
 
     def __init__(self, drone_id, request_arming):
         self.drone_id = drone_id
