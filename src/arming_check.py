@@ -6,7 +6,7 @@ from msg_pkg.msg import armingMsg
 
 class ArmingCheck:
 
-    __init__(self, drone_id, request_arming):
+    def __init__(self, drone_id, request_arming):
         self.drone_id = drone_id
         self.request_arming = request_arming
         self.arming_feedback_pub = rospy.Publisher(drone_id + 'arming_feedback', feedbackMsg, queue_size=10)
