@@ -13,7 +13,7 @@ class ServerActionClient():
         self.arming_check_timestamp = 0
         self.action_client_obj = actionlib.SimpleActionClient(mission_request[4] + '/mavros/smr_px4_command/d1_cmd_action', server_px4_reqAction)
         self.mission_feedback_pub = rospy.Publisher(mission_request[4] + 'mission_feedback', feedbackMsg, queue_size=10)
-        rospy.Subscriber(drone_id + "arming_state", armingMsg, self.arming_checks_cb)
+        rospy.Subscriber(mission_request[4] + "arming_state", armingMsg, self.arming_checks_cb)
         self.mission_feedback = feedbackMsg()
         print("Successfully started the action client") #publish to mission_feedback code: 0 drone_id:
         if(self.initialConnectPi()):
