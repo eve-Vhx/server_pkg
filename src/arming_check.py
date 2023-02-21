@@ -34,15 +34,27 @@ class ServerArmingCheck:
 
     def run_connection_checks(self):
         if (self.connections_status["mavros"] == False):
+            self.arming_feedback.feedback = 2
+            self.arming_feedback.drone_id = self.drone_id
+            self.arming_pub.publish(self.arming_feedback)
             print("Server arming request failed because mavros is offline") #publish to arming_feedback code: 2
             return False
         elif (self.connection_checks["px4"] == False):
+            self.arming_feedback.feedback = 3
+            self.arming_feedback.drone_id = self.drone_id
+            self.arming_pub.publish(self.arming_feedback)
             print ("Server arming request failed because px4 is offline") #publish to arming_feedback code: 3
             return False
         elif (abs(rospy.Time.now().secs - self.connections_status["ros_timestamp"]) > 2):
+            self.arming_feedback.feedback = 4
+            self.arming_feedback.drone_id = self.drone_id
+            self.arming_pub.publish(self.arming_feedback)
             print ("Server arming request failed because the time delay is too large for connection checks") #publish to arming_feedback code: 4
             return False
         else:
+            self.arming_feedback.feedback = 5
+            self.arming_feedback.drone_id = self.drone_id
+            self.arming_pub.publish(self.arming_feedback)
             print ("Server arming request succeeded in connection checks") #publish to arming_feedback code: 5
             return True
 
@@ -51,9 +63,15 @@ class ServerArmingCheck:
         while(not rospy.is_shutdown()):
             if (self.run_connection_checks()):
                 if (self.request_arming == True):
+                    self.arming_feedback.feedback = 0
+                    self.arming_feedback.drone_id = self.drone_id
+                    self.arming_pub.publish(self.arming_feedback)
                     print("Server arming request succeeded!") #publish to arming_feedback code: 0 
                     self.arming_state.armed = True
                 else:
+                    self.arming_feedback.feedback = 1
+                    self.arming_feedback.drone_id = self.drone_id
+                    self.arming_pub.publish(self.arming_feedback)
                     print("Server disarming request successfully changed arming to disarmed") #publish to arming_feedback code: 1
                     self.arming_state.armed = False
             else:

@@ -15,11 +15,20 @@ class ServerActionClient():
         self.mission_feedback_pub = rospy.Publisher(mission_request[4] + 'mission_feedback', feedbackMsg, queue_size=10)
         rospy.Subscriber(mission_request[4] + "arming_state", armingMsg, self.arming_checks_cb)
         self.mission_feedback = feedbackMsg()
+        self.mission_feedback.feedback = 0
+        self.mission_feedback.drone_id = self.mission_request[4]
+        self.mission_feedback_pub.publish(self.mission_feedback)
         print("Successfully started the action client") #publish to mission_feedback code: 0 drone_id:
         if(self.initialConnectPi()):
+            self.mission_feedback.feedback = 1
+            self.mission_feedback.drone_id = self.mission_request[4]
+            self.mission_feedback_pub.publish(self.mission_feedback)
             print("Server action client has found and connected to the action server on the Pi") #publish to mission_feedback code: 1 drone_id:
             self.sendGoal()
         else:
+            self.mission_feedback.feedback = 2
+            self.mission_feedback.drone_id = self.mission_request[4]
+            self.mission_feedback_pub.publish(self.mission_feedback)
             print("Server action client did not find the action server on the Pi") #publish to mission_feedback code: 2 drone_id
             self.mission_feedback.feedback = 2
             self.mission_feedback_pub.publish(self.mission_feedback)
@@ -31,7 +40,8 @@ class ServerActionClient():
         if (self.run_arming_check()):
             self.mission_goal = server_px4_reqGoal(lat=self.mission_request[0], lon=self.mission_request[1], alt=self.mission_request[2], cruise_alt=self.mission_request[3], yaw_rad=0, mission_type=0, timestamp=rospy.Time.now().secs)
             self.action_client_obj.send_goal(self.mission_goal)
-            self.mission_feedback.feedback = 0
+            self.mission_feedback.feedback = 3
+            self.mission_feedback.drone_id = self.mission_request[4]
             self.mission_feedback_pub.publish(self.mission_feedback)
             print("Server action client successfully sent the goal to the pi") #publish to mission_feedback code: 3 drone_id
             self.action_client_obj.wait_for_result()
@@ -47,12 +57,21 @@ class ServerActionClient():
     def run_arming_check(self):
         if (self.arming_check_status == True):
             if (abs(rospy.Time.now() - self.arming_check_timestamp) < 2):
+                self.mission_feedback.feedback = 6
+                self.mission_feedback.drone_id = self.mission_request[4]
+                self.mission_feedback_pub.publish(self.mission_feedback)
                 print("Server action client successfully passed all arming checks") #publish to mission_feedback code: 6 drone_id:
                 return True
             else:
+                self.mission_feedback.feedback = 5
+                self.mission_feedback.drone_id = self.mission_request[4]
+                self.mission_feedback_pub.publish(self.mission_feedback)
                 print("Server action client failed arming check because connection checks are out of date") #publish to mission_feedback code: 5 drone_id
                 return False
         else:
+            self.mission_feedback.feedback = 4
+            self.mission_feedback.drone_id = self.mission_request[4]
+            self.mission_feedback_pub.publish(self.mission_feedback)
             print("Server action client failed arming check because drone is not armed") #publish to mission_feedback code: 4 drone_id
             return False
 
