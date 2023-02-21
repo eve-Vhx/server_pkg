@@ -4,6 +4,7 @@ from msg_pkg.srv import masterConnect, masterConnectResponse
 from msg_pkg.srv import UiReq, UiReqResponse
 from msg_pkg.srv import UiArmReq, UiArmReqResponse
 from msg_pkg.msg import droneMasterList
+from msg_pkg.msg import feedbackMsg
 from action_client import ServerActionClient
 from arming_check import ServerArmingCheck
 
@@ -12,10 +13,12 @@ class ClientConnect:
     def __init__(self,name):
         self.drone_master_array = []
         self.mission_request = []
+        self.feedback_msg = feedbackMsg()
         self.pi_connect_service = rospy.Service('pi_connect_master', masterConnect, self.handle_connect_cb)
         self.ui_mission_req_service = rospy.Service('ui_mission_req', UiReq, self.handle_ui_mission_cb)
         self.ui_arming_req_service = rospy.Service('ui_arming_req', UiArmReq, self.handle_ui_arming_cb)
         self.drone_master_list_pub = rospy.Publisher('QROW_master_list', droneMasterList, queue_size=10)
+        self.server_master_feedback_ = rospy.Publisher('server_master_feedback', feedbackMsg, queue_size=10)
         print("Server connect service started!")
 
     def handle_connect_cb(self, req):
