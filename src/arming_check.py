@@ -33,7 +33,7 @@ class ServerArmingCheck:
         }
 
     def run_connection_checks(self):
-        if (self.connections_status["mavros"] == False:
+        if (self.connections_status["mavros"] == False):
             print("Server arming request failed because mavros is offline") #publish to arming_feedback code: 2
             return False
         elif (self.connection_checks["px4"] == False):
