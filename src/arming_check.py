@@ -66,7 +66,7 @@ class ServerArmingCheck:
         while(not rospy.is_shutdown()):
 
             if(self.request_arming == True):
-                if(abs(rospy.Time.now() - self.timestamp_req) < 5):
+                if(abs(rospy.Time.now().secs - self.timestamp_req) < 5):
                     if(self.run_connection_checks()):
                         self.arming_feedback.feedback = 0
                         self.arming_feedback.drone_id = self.drone_id
