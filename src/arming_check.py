@@ -7,6 +7,7 @@ from msg_pkg.msg import armingMsg
 class ServerArmingCheck:
 
     def __init__(self, drone_id, request_arming):
+        print("Recevied the arming request from the master")
         self.connections_status = {
             "px4": False,
             "mavros": False,

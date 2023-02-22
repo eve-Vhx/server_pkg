@@ -41,11 +41,12 @@ class ClientConnect:
         server_action_client = ServerActionClient(self.mission_request)
 
     def handle_ui_arming_cb(self, req):
-        # self.feedback_msg.feedback = 2
-        # self.feedback_msg.drone_id = req.drone_id
-        # self.server_master_feedback_.publish(self.feedback_msg)
+        self.feedback_msg.feedback = 2
+        self.feedback_msg.drone_id = req.drone_id
+        self.server_master_feedback_.publish(self.feedback_msg)
         print("UI has asked for drone to be armed") #publish to server_master_feedback code: 2 drone_id
         server_arming_check = ServerArmingCheck(req.drone_id, req.request_arming)
+        print("Sent the arming request through from master")
 
 
 
