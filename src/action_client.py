@@ -7,7 +7,7 @@ from msg_pkg.msg import armingMsg
 
 class ServerActionClient():
 
-    def __init__(self,mission_request):
+    def __init__(self,name):
         self.mission_request = mission_request
         self.arming_check_status = False
         self.arming_check_timestamp = 0
@@ -15,9 +15,9 @@ class ServerActionClient():
         self.mission_feedback_pub = rospy.Publisher(mission_request[4] + 'mission_feedback', feedbackMsg, queue_size=10)
         rospy.Subscriber(mission_request[4] + "arming_state", armingMsg, self.arming_checks_cb)
         self.mission_feedback = feedbackMsg()
-        self.mission_feedback.feedback = 0
-        self.mission_feedback.drone_id = self.mission_request[4]
-        self.mission_feedback_pub.publish(self.mission_feedback)
+        # self.mission_feedback.feedback = 0
+        # self.mission_feedback.drone_id = self.mission_request[4]
+        # self.mission_feedback_pub.publish(self.mission_feedback)
         print("Successfully started the action client") #publish to mission_feedback code: 0 drone_id:
         if(self.initialConnectPi()):
             self.mission_feedback.feedback = 1
@@ -74,5 +74,12 @@ class ServerActionClient():
             self.mission_feedback_pub.publish(self.mission_feedback)
             print("Server action client failed arming check because drone is not armed") #publish to mission_feedback code: 4 drone_id
             return False
+
+
+if __name__ == '__main__':
+    rospy.init_node('server_mission_client', anonymous=True)
+    ServerActionClient(rospy.get_name())
+    rospy.spin()
+
 
         
