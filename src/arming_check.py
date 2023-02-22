@@ -19,7 +19,7 @@ class ServerArmingCheck:
         self.request_arming = request_arming
         self.arming_feedback_pub = rospy.Publisher(drone_id + 'arming_feedback', feedbackMsg, queue_size=10)
         self.arming_pub = rospy.Publisher(drone_id + 'arming_state', armingMsg, queue_size=10)
-        rospy.Subscriber(drone_id + "connection_checks", connections_drone, self.connections_cb)
+        rospy.Subscriber(drone_id + "/connection_checks", connections_drone, self.connections_cb)
         self.arming_feedback = feedbackMsg()
         self.arming_state = armingMsg()
         self.run_arming_check()
