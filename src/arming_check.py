@@ -6,7 +6,7 @@ from msg_pkg.msg import armingMsg
 
 class ServerArmingCheck:
 
-    def __init__(self, drone_id, request_arming):
+    def __init__(self, drone_id, request_arming, timestamp_req):
         print("/" + drone_id + "/connection_checks")
         self.connections_status = {
             "px4": False,
@@ -63,7 +63,7 @@ class ServerArmingCheck:
 
     def run_arming_check(self):
         print("Inside run arming checks")
-        while(not rospy.is_shutdown()):
+        while(abs(rospy.Time.now().secs - timestamp_req) < 5):
             if (self.run_connection_checks()):
                 if (self.request_arming == True):
                     self.arming_feedback.feedback = 0
