@@ -61,6 +61,7 @@ class ServerArmingCheck:
 
 
     def run_arming_check(self):
+        print("Inside run arming checks")
         while(not rospy.is_shutdown()):
             if (self.run_connection_checks()):
                 if (self.request_arming == True):
