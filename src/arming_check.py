@@ -64,15 +64,20 @@ class ServerArmingCheck:
     def run_arming_check(self):
         while(not rospy.is_shutdown()):
             if(self.run_connection_checks()):
+                print("Passed conection checks")
                 if(self.request_arming == True):
+                    print("Request arming is true")
                     if(abs(rospy.Time.now().secs - self.timestamp_req) < 5):
+                        print("Within 5 secs")
                         self.arming_state_local = True
                     else:
-                        print("In the else statement")
+                        print("after 5 secs")
                         print(self.arming_state_local)
                 else:
+                    print("Request arming is false")
                     self.arming_state_local = False
             else:
+                print("Failed connection checks")
                 self.arming_state_local = False
 
             
