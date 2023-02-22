@@ -34,6 +34,7 @@ class ServerArmingCheck:
         }
 
     def run_connection_checks(self):
+        print("Inside run connection checks")
         if (self.connections_status["mavros"] == False):
             self.arming_feedback.feedback = 2
             self.arming_feedback.drone_id = self.drone_id
