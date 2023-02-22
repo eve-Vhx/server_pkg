@@ -8,7 +8,7 @@ from msg_pkg.msg import connections_drone
 
 class ServerMissionClient:
 
-    def __init__(self,name)
+    def __init__(self,name):
         self.connections_status = {
             "px4": False,
             "mavros": False,
