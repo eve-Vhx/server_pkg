@@ -41,7 +41,7 @@ class ServerArmingCheck:
             self.arming_feedback_pub.publish(self.arming_feedback)
             print("Server arming request failed because mavros is offline") #publish to arming_feedback code: 2
             return False
-        elif (self.connection_status["px4"] == False):
+        elif (self.connections_status["px4"] == False):
             self.arming_feedback.feedback = 3
             self.arming_feedback.drone_id = self.drone_id
             self.arming_feedback_pub.publish(self.arming_feedback)
