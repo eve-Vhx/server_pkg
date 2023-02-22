@@ -35,7 +35,6 @@ class ServerArmingCheck:
         }
 
     def run_connection_checks(self):
-        print("Inside run connection checks")
         if (self.connections_status["mavros"] == False):
             self.arming_feedback.feedback = 2
             self.arming_feedback.drone_id = self.drone_id
@@ -79,8 +78,7 @@ class ServerArmingCheck:
                         self.arming_feedback_pub.publish(self.arming_feedback)
                         print("Server arming request failed connection checks") #publish to arming_feedback code: 1
                         self.arming_state.armed = False
-                else:
-                    continue
+            
             else:
                 self.arming_feedback.feedback = 6
                 self.arming_feedback.drone_id = self.drone_id
