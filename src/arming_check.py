@@ -72,7 +72,6 @@ class ServerArmingCheck:
                         self.arming_state_local = True
                     else:
                         print("after 5 secs")
-                        print(self.arming_state_local)
                 else:
                     print("Request arming is false")
                     self.arming_state_local = False
