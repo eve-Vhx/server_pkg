@@ -23,7 +23,7 @@ class ClientConnect:
 
     def handle_connect_cb(self, req):
         self.feedback_msg.feedback = 0
-        self.feedback_msg.drone_id = req.drone_id
+        self.feedback_msg.drone_id = req.id
         self.server_master_feedback_.publish(self.feedback_msg)
         print("Server recieved a new Rpi. 001:0") #publish to server_master_feedback code: 0 drone_id: 
         self.drone_master_array.append(req.id)
