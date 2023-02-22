@@ -22,7 +22,6 @@ class ServerArmingCheck:
         self.arming_pub = rospy.Publisher(drone_id + 'arming_state', armingMsg, queue_size=10)
         rospy.Subscriber("/" + drone_id + "/connection_checks", connections_drone, self.connections_cb)
         self.arming_feedback = feedbackMsg()
-        self.arming_state = armingMsg()
         self.run_arming_check()
 
     def connections_cb(self, data):
@@ -63,7 +62,7 @@ class ServerArmingCheck:
 
     def run_arming_check(self):
         while(not rospy.is_shutdown()):
-
+            arming_state = armingMsg()
             if(self.request_arming == True):
                 if(abs(rospy.Time.now().secs - self.timestamp_req) < 5):
                     if(self.run_connection_checks()):
@@ -71,23 +70,23 @@ class ServerArmingCheck:
                         self.arming_feedback.drone_id = self.drone_id
                         self.arming_feedback_pub.publish(self.arming_feedback)
                         print("Server arming request succeeded!") #publish to arming_feedback code: 0 
-                        self.arming_state.armed = True
+                        arming_state.armed = True
                     else:
                         self.arming_feedback.feedback = 1
                         self.arming_feedback.drone_id = self.drone_id
                         self.arming_feedback_pub.publish(self.arming_feedback)
                         print("Server arming request failed connection checks") #publish to arming_feedback code: 1
-                        self.arming_state.armed = False
+                        arming_state.armed = False
             
             else:
                 self.arming_feedback.feedback = 6
                 self.arming_feedback.drone_id = self.drone_id
                 self.arming_feedback_pub.publish(self.arming_feedback)
                 print("UI has requested arming to be disarmed")
-                self.arming_state.armed = False
+                arming_state.armed = False
             
-            self.arming_state.timestamp = rospy.Time.now().secs
-            self.arming_pub.publish(self.arming_state)
+            arming_state.timestamp = rospy.Time.now().secs
+            self.arming_pub.publish(arming_state)
 
             rospy.sleep(1)
 
