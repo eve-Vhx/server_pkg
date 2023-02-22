@@ -17,6 +17,7 @@ class ServerArmingCheck:
         }
         self.drone_id = drone_id
         self.request_arming = request_arming
+        self.timestamp_req = timestamp_req
         self.arming_feedback_pub = rospy.Publisher(drone_id + 'arming_feedback', feedbackMsg, queue_size=10)
         self.arming_pub = rospy.Publisher(drone_id + 'arming_state', armingMsg, queue_size=10)
         rospy.Subscriber("/" + drone_id + "/connection_checks", connections_drone, self.connections_cb)
@@ -62,22 +63,29 @@ class ServerArmingCheck:
 
 
     def run_arming_check(self):
-        print("Inside run arming checks")
-        while(abs(rospy.Time.now().secs - timestamp_req) < 5):
-            if (self.run_connection_checks()):
-                if (self.request_arming == True):
-                    self.arming_feedback.feedback = 0
-                    self.arming_feedback.drone_id = self.drone_id
-                    self.arming_feedback_pub.publish(self.arming_feedback)
-                    print("Server arming request succeeded!") #publish to arming_feedback code: 0 
-                    self.arming_state.armed = True
+        while(not rospy.is_shutdown()):
+
+            if(self.request_arming == True):
+                if(abs(rospy.Time.now() - timestamp_req) < 5):
+                    if(self.run_connection_checks()):
+                        self.arming_feedback.feedback = 0
+                        self.arming_feedback.drone_id = self.drone_id
+                        self.arming_feedback_pub.publish(self.arming_feedback)
+                        print("Server arming request succeeded!") #publish to arming_feedback code: 0 
+                        self.arming_state.armed = True
+                    else:
+                        self.arming_feedback.feedback = 1
+                        self.arming_feedback.drone_id = self.drone_id
+                        self.arming_feedback_pub.publish(self.arming_feedback)
+                        print("Server arming request failed connection checks") #publish to arming_feedback code: 1
+                        self.arming_state.armed = False
                 else:
-                    self.arming_feedback.feedback = 1
-                    self.arming_feedback.drone_id = self.drone_id
-                    self.arming_feedback_pub.publish(self.arming_feedback)
-                    print("Server disarming request successfully changed arming to disarmed") #publish to arming_feedback code: 1
-                    self.arming_state.armed = False
+                    continue
             else:
+                self.arming_feedback.feedback = 6
+                self.arming_feedback.drone_id = self.drone_id
+                self.arming_feedback_pub.publish(self.arming_feedback)
+                print("UI has requested arming to be disarmed")
                 self.arming_state.armed = False
             
             self.arming_state.timestamp = rospy.Time.now().secs
