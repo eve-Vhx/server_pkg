@@ -20,7 +20,7 @@ class ClientConnect:
         #self.ui_arming_req_service = rospy.Service('ui_arming_req', UiArmReq, self.handle_ui_arming_cb)
         self.drone_master_list_pub = rospy.Publisher('QROW_master_list', droneMasterList, queue_size=10)
         self.server_master_feedback_ = rospy.Publisher('server_master_feedback', feedbackMsg, queue_size=10)
-        self.check_connections()
+        #self.check_connections()
         rospy.Subscriber("/" + drone_id + "/connection_checks", connections_drone, self.connections_cb)
 
     def handle_connect_cb(self, req):
