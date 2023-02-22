@@ -67,6 +67,8 @@ class ServerArmingCheck:
                 if(self.request_arming == True):
                     if(abs(rospy.Time.now().secs - self.timestamp_req) < 5):
                         self.arming_state_local = True
+                    else:
+                        self.arming_state_local = self.arming_state_local
                 else:
                     self.arming_state_local = False
             else:
