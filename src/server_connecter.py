@@ -1,60 +1,59 @@
 #!/usr/bin/env python
 import rospy
 from msg_pkg.srv import masterConnect, masterConnectResponse
-from msg_pkg.srv import UiReq, UiReqResponse
-from msg_pkg.srv import UiArmReq, UiArmReqResponse
 from msg_pkg.msg import droneMasterList
-from msg_pkg.msg import feedbackMsg
-from action_client import ServerActionClient
-from arming_check import ServerArmingCheck
+from drone_connection import DroneConnection 
 
-class ClientConnect:
 
+class ServerConnecter:
     def __init__(self,name):
-        print("Server connect service started!")
-        self.drone_master_array = []
-        #self.mission_request = []
-        self.feedback_msg = feedbackMsg()
+        self.drone_ui_array = []
+        self.drone_obj_array = []
         self.pi_connect_service = rospy.Service('pi_connect_master', masterConnect, self.handle_connect_cb)
-        #self.ui_mission_req_service = rospy.Service('ui_mission_req', UiReq, self.handle_ui_mission_cb)
-        #self.ui_arming_req_service = rospy.Service('ui_arming_req', UiArmReq, self.handle_ui_arming_cb)
-        self.drone_master_list_pub = rospy.Publisher('QROW_master_list', droneMasterList, queue_size=10)
-        self.server_master_feedback_ = rospy.Publisher('server_master_feedback', feedbackMsg, queue_size=10)
-        #self.check_connections()
-        rospy.Subscriber("/" + drone_id + "/connection_checks", connections_drone, self.connections_cb)
+        self.ui_drone_pub = rospy.Publisher('drone_master_list', droneMasterList, queue_size=10)
+        print("Started server connect service")
+        #self.update_drone_array()
+    
+    def handle_connect_cb(self,req):
 
-    def handle_connect_cb(self, req):
-        print("Server recieved a new Rpi with id: " + req.id) #publish to server_master_feedback code: 0 drone_id: 
-        self.drone_master_array.append(req.id)
-        ui_master_list = droneMasterList()
-        ui_master_list.drone_master_list = self.drone_master_array
-        self.drone_master_list_pub.publish(ui_master_list)
+        exists = False
+        for droneid in self.drone_ui_array:
+            if(droneid == req.id):
+                exists = True
+        
+        if(not exists):
+            self.drone_ui_array.append(req.id)
+            drone_obj = DroneConnection(req.id)
+            self.drone_obj_array.append(drone_obj)
+        print(self.drone_ui_array)
         return masterConnectResponse(True)
+    
+    def update_drone_array(self):
+        while(not rospy.is_shutdown()):
+            for droneObj in self.drone_obj_array:
+                if (droneObj.updated == False):
+                    for droneId in self.drone_ui_array:
+                        if (droneId == droneObj.id):
+                            self.drone_ui_array.remove(droneId)
+                else:
+                    exists_ = False
+                    for droneId_ in self.drone_ui_array:
+                        if(droneId_ == droneObj.id):
+                            exists_ = True
+                    
+                    if(not exists_):
+                        self.drone_ui_array.append(droneObj.id)
 
-
-    # def handle_ui_mission_cb(self, req):
-    #     self.feedback_msg.feedback = 1
-    #     self.feedback_msg.drone_id = req.drone_id
-    #     self.server_master_feedback_.publish(self.feedback_msg)
-    #     print("UI has asked for a mission request") #publish to server_master_feedback code: 1 drone_id
-    #     self.mission_request = [req.lat, req.lon, req.alt, req.cruise_alt, req.drone_id]
-    #     server_action_client = ServerActionClient(self.mission_request)
-
-    # def handle_ui_arming_cb(self, req):
-    #     self.feedback_msg.feedback = 2
-    #     self.feedback_msg.drone_id = req.drone_id
-    #     self.server_master_feedback_.publish(self.feedback_msg)
-    #     print("UI has asked for drone to be armed") #publish to server_master_feedback code: 2 drone_id
-    #     server_arming_check = ServerArmingCheck(req.drone_id, req.request_arming, rospy.Time.now().secs)
-    #     print("Sent the arming request through from master")
-
-
+            drone_master_list_msg = droneMasterList()
+            drone_master_list_msg.drone_master_list = self.drone_ui_array
+            self.ui_drone_pub.publish(drone_master_list_msg)
+            rospy.sleep(2)
 
 
 
 if __name__ == '__main__':
-    rospy.init_node('server_master_node', anonymous=True)
-    ClientConnect(rospy.get_name())
+    rospy.init_node('server_connecter', anonymous=True)
+    ServerConnecter(rospy.get_name())
     rospy.spin()
 
 
