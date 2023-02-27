@@ -3,6 +3,7 @@ import rospy
 from msg_pkg.msg import connections_drone
 from msg_pkg.msg import feedbackMsg
 from msg_pkg.msg import telemMsg
+from msg_pkg.srv import masterConnect, masterConnectResponse
 
 from mavros_msgs.msg import GPSRAW
 from mavros_msgs.msg import State
@@ -10,15 +11,22 @@ from sensor_msgs.msg import Range
 from geometry_msgs.msg import TwistStamped
 from sensor_msgs.msg import BatteryState
 
+import threading
+
 
 class DroneConnection:
-    def __init__(self,id):
-        print("Successfully created new drone object!")
-        self.id = id
-        rospy.Subscriber(id + "/connection_checks", connections_drone, self.connections_cb)
-        self.updated = False
-        self.drone_connecter_feedback = rospy.Publisher(id + "drone_connecter_feedback", feedbackMsg, queue_size=10)
-        self.drone_telem_pub = rospy.Publisher(id + "ui_telem_data", telemMsg, queue_size=10)
+    def __init__(self):
+        self.timer = threading.Timer(5,self.timeout)
+        self.drone_connect_service = rospy.Service('drone_telem_connect', masterConnect, self.run_routine)
+
+    def run_routine(self,req):
+        self.id = req.id
+        rospy.Subscriber(self.id + "/connection_checks", connections_drone, self.connections_cb)
+        self.px4 = False
+        self.mavros = False
+        self.connected = False
+        self.drone_connecter_feedback = rospy.Publisher(self.id + "drone_connecter_feedback", feedbackMsg, queue_size=10)
+        self.drone_telem_pub = rospy.Publisher(req.id + "ui_telem_data", telemMsg, queue_size=10)
 
         #MAVROS telemetry data
         self.mavros_telem_gps = {
@@ -41,19 +49,37 @@ class DroneConnection:
         self.mavros_telem_battery = {
             "battery_percent" : 0
         }
-        rospy.Subscriber(id + "/mavros/gpsstatus/gps1/raw", GPSRAW, self.mavros_gps_cb)
-        rospy.Subscriber(id + "/mavros/state", State, self.mavros_state_cb)
-        rospy.Subscriber(id + "/mavros/distance_sensor/hrlv_ez4_pub", Range, self.mavros_distancez_cb)
-        rospy.Subscriber(id + "/mavros/setpoint_velocity/cmd_vel", TwistStamped, self.mavros_vel_cb)
-        rospy.Subscriber(id + "/mavros/battery", BatteryState, self.mavros_battery_cb)
+        rospy.Subscriber(self.id + "/mavros/gpsstatus/gps1/raw", GPSRAW, self.mavros_gps_cb)
+        rospy.Subscriber(self.id + "/mavros/state", State, self.mavros_state_cb)
+        rospy.Subscriber(self.id + "/mavros/distance_sensor/hrlv_ez4_pub", Range, self.mavros_distancez_cb)
+        rospy.Subscriber(self.id + "/mavros/setpoint_velocity/cmd_vel", TwistStamped, self.mavros_vel_cb)
+        rospy.Subscriber(self.id + "/mavros/battery", BatteryState, self.mavros_battery_cb)
+
+        self.timer.start()
 
         self.publish_telem_data()
+
+        return masterConnectResponse(True)
+
+    def timeout(self):
+        self.connected = False
+        self.mavros = False
+        self.px4 = False
         
 
-
     def connections_cb(self,msg):
-        if (msg.mavros == True and msg.px4 == True):
-            self.updated = True
+        self.connected = True
+        self.timer.cancel()
+        self.timer = threading.Timer(5,self.timeout)
+        self.timer.start()
+        if (msg.mavros == True):
+            self.mavros = True
+        elif (msg.mavros == False):
+            self.mavros = False
+        if (msg.px4 == True):
+            self.px4 = True
+        elif (msg.px4 == False):
+            self.px4 = False
 
     def mavros_gps_cb(self,data):
         self.mavros_telem_gps = {
@@ -98,7 +124,15 @@ class DroneConnection:
             ui_telem_msg.vel_y = self.mavros_telem_vel["vel_y"]
             ui_telem_msg.vel_z = self.mavros_telem_vel["vel_z"]
             ui_telem_msg.battery = self.mavros_telem_battery["battery_percent"]
+            ui_telem_msg.connected = self.connected
+            ui_telem_msg.mavros = self.mavros
+            ui_telem_msg.px4 = self.px4
 
             self.drone_telem_pub.publish(ui_telem_msg)
             rospy.sleep(1)
+
+if __name__ == '__main__':
+    rospy.init_node('drone_telem_connections')
+    DroneConnection()
+    rospy.spin()
             

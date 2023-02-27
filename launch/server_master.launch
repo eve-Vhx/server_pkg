@@ -1,7 +1,8 @@
 <launch>
 	<node pkg="server_pkg" name="server_connecter_node" type="server_connecter.py" output="screen"></node>
+	<node pkg="server_pkg" name="drone_connection_node" type="drone_connection.py" output="screen"></node>
 	<!-- <node pkg="server_pkg" name="mission_action_client_node" type="mission_action_client.py" output="screen"></node> -->
-	<include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" > 
+	<!-- <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" > 
      <arg name="port" value="9090"/>
-  	</include>
+  	</include> -->
 </launch>
