@@ -6,7 +6,7 @@ from msg_pkg.srv import UiReq, UiReqResponse
 
 class DroneMission:
     def __init__(self):
-        self.drone_mission_service = rospy.Service('ui_mission_req', , self.run_routine)
+        self.drone_mission_service = rospy.Service('ui_mission_req',UiReq, self.run_routine)
     
     def run_routine(self,req):
         print("running mission request")
