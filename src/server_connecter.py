@@ -8,13 +8,10 @@ from msg_pkg.srv import UiReq
 class ServerConnecter:
     def __init__(self,name):
         self.drone_ui_array = []
-        self.drone_obj_array = []
-        self.drone_mission_array = []
         self.pi_connect_service = rospy.Service('pi_connect_master', masterConnect, self.handle_connect_cb)
         self.ui_mission_service = rospy.Service('ui_mission_req', UiReq, self.handle_mission_cb)
         self.ui_drone_pub = rospy.Publisher('drone_master_list', droneMasterList, queue_size=10)
         print("Started server connect service")
-        #self.update_drone_array()
     
     def handle_connect_cb(self,req):
 
@@ -30,7 +27,6 @@ class ServerConnecter:
                 telem_client = rospy.ServiceProxy('drone_telem_connect', masterConnect)
             except rospy.ServiceException as e:
                 print("Cannot setup new drone for telemetry")
-        print(self.drone_ui_array)
         return masterConnectResponse(True)
 
     def handle_mission_cb(self,req):
