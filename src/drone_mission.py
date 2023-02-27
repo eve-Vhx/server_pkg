@@ -10,10 +10,10 @@ class DroneMission:
     
     def run_routine(self,req):
         print("running mission request")
-        self.id = id
+        self.id = req.id
         self.mission_goal = [req.lat, req.lon, req.alt]
         self.connected_server = False
-        self.mission_action_client = actionlib.SimpleActionClient(id + '/mavros/smr_px4_command/d1_cmd_action', server_px4_reqAction)
+        self.mission_action_client = actionlib.SimpleActionClient(self.id + '/mavros/smr_px4_command/d1_cmd_action', server_px4_reqAction)
 
         self.check_send_mission()
 
