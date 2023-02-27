@@ -9,7 +9,7 @@ class ServerConnecter:
     def __init__(self,name):
         self.drone_ui_array = []
         self.pi_connect_service = rospy.Service('pi_connect_master', masterConnect, self.handle_connect_cb)
-        self.ui_mission_service = rospy.Service('ui_mission_req', UiReq, self.handle_mission_cb)
+        #self.ui_mission_service = rospy.Service('ui_mission_req', UiReq, self.handle_mission_cb)
         self.ui_drone_pub = rospy.Publisher('drone_master_list', droneMasterList, queue_size=10)
         print("Started server connect service")
     
@@ -29,8 +29,6 @@ class ServerConnecter:
                 print("Cannot setup new drone for telemetry")
         return masterConnectResponse(True)
 
-    def handle_mission_cb(self,req):
-        print("UI has asked to send a mission through to drone")
 
 
 
