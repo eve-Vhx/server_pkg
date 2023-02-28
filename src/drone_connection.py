@@ -15,9 +15,9 @@ import threading
 
 
 class DroneConnection:
-    def __init__(self):
+    def __init__(self, id):
         self.timer = threading.Timer(5,self.timeout)
-        self.drone_connect_service = rospy.Service('drone_telem_connect', masterConnect, self.run_routine)
+        self.drone_connect_service = rospy.Service(id + 'drone_telem_connect', masterConnect, self.run_routine)
 
     def run_routine(self,req):
         self.id = req.id
@@ -131,8 +131,5 @@ class DroneConnection:
             self.drone_telem_pub.publish(ui_telem_msg)
             rospy.sleep(1)
 
-if __name__ == '__main__':
-    rospy.init_node('drone_telem_connections')
-    DroneConnection()
-    rospy.spin()
+
             
