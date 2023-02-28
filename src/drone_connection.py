@@ -85,7 +85,7 @@ class DroneConnection:
         self.mavros_telem_gps = {
             "lat" : data.lat*10**(-7),
             "lon" : data.lon*10**(-7),
-            "alt" : data.alt*10**(-3)
+            "alt" : data.alt*10**(-3),
         }
     
     def mavros_state_cb(self,data):

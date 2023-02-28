@@ -16,3 +16,20 @@ class NestConnection:
         self.beacon_on = False
         self.connected = False
         self.nest_telem_pub = rospy.Publisher(self.id + 'ui_nest_telem', nestTelemMsg)
+        self.publish_nest_data()
+
+    def charging_cb(self,msg):
+        self.charging = msg.charging
+
+    def beacon_cb(self,msg):
+        self.beacon_on = msg.beacon_on
+
+    def publish_nest_data(self):
+        while (not rospy.is_shutdown()):
+            nest_telem_msg = nestTelemMsg()
+            nest_telem_msg.charging = self.charging
+            nest_telem_msg.beacon = self.beacon_on
+            nest_telem_msg.connected = self.connected
+
+            self.nest_telem_pub.publish(nest_telem_msg)
+            rospy.sleep(1)
