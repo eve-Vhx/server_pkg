@@ -7,6 +7,7 @@ from msg_pkg.srv import UiReq, UiReqResponse
 class DroneMission:
     def __init__(self):
         self.drone_mission_service = rospy.Service('ui_mission_req',UiReq, self.run_routine)
+        self.success = False
     
     def run_routine(self,req):
         print("running mission request")
@@ -17,6 +18,8 @@ class DroneMission:
 
         self.check_send_mission()
 
+        UiReqResponse(self.success)
+
     def initiate_connection(self):
         return self.mission_action_client.wait_for_server(timeout=rospy.Duration(5.0))
 
@@ -25,6 +28,7 @@ class DroneMission:
         self.mission_action_client.send_goal(mission_goal_msg)
         self.mission_action_client.wait_for_result()
         print(self.mission_action_client.get_result())
+        self.success = True
 
     def check_send_mission(self):
         if(self.initiate_connection() == True):
@@ -32,6 +36,7 @@ class DroneMission:
             self.send_goal_pi()
         else:
             self.connected_server = False
+            self.success = False
             print("The action client not connected to the pi server")
     
                 

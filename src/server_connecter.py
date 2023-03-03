@@ -17,6 +17,19 @@ class ServerConnecter:
         self.ui_drone_pub = rospy.Publisher('drone_master_list', uiMasterList, queue_size=10)
         self.ui_nest_pub = rospy.Publisher('nest_master_list', uiMasterList, queue_size=10)
         print("Started server connect service")
+        self.run_routine()
+
+    def run_routine(self):
+        while True:
+            drone_master_msg = uiMasterList()
+            drone_master_msg.ui_master_list = self.drone_ui_array
+            self.ui_drone_pub.publish(drone_master_msg)
+
+            nest_master_msg = uiMasterList()
+            nest_master_msg.ui_master_list = self.nest_ui_array
+            self.ui_nest_pub.publish(nest_master_msg)
+
+            rospy.sleep(3)
     
     def handle_drone_connect_cb(self,req):
 
@@ -27,9 +40,6 @@ class ServerConnecter:
         
         if(not drone_exists):
             self.drone_ui_array.append(req.id)
-            drone_master_msg = uiMasterList()
-            drone_master_msg.ui_master_list = self.drone_ui_array
-            self.ui_drone_pub.publish(drone_master_msg)
             drone_connection_obj = DroneConnection(req.id)
             rospy.wait_for_service(req.id + 'drone_telem_connect')
             try:
@@ -49,9 +59,6 @@ class ServerConnecter:
 
         if(not nest_exists):
             self.nest_ui_array.append(req.id)
-            nest_master_msg = uiMasterList()
-            nest_master_msg.ui_master_list = self.nest_ui_array
-            self.ui_nest_pub.publish(nest_master_msg)
             nest_connection_obj = NestConnection(req.id)
             rospy.wait_for_service(req.id + 'nest_telem_connect')
             try:
