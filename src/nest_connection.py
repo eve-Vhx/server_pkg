@@ -2,7 +2,7 @@
 import rospy
 from msg_pkg.srv import masterConnect, masterConnectResponse
 from msg_pkg.msg import NestBeaconFeedback, NestChargeFeedback
-from msg_pkg.msg import nestTelemMsg
+from msg_pkg.msg import nestTelemMsg, fakeChargeMsg, fakeBeaconMsg
 
 class NestConnection:
     def __init__(self, id):
@@ -11,8 +11,8 @@ class NestConnection:
     def run_routine(self,req):
         print("Nest connection node called with id: " + req.id)
         self.id = req.id
-        rospy.Subscriber(self.id + '/Charge_cntl/feedback', NestChargeFeedback, self.charging_cb)
-        rospy.Subscriber(self.id + '/Beacon_cntl/feedback', NestBeaconFeedback, self.beacon_cb)
+        rospy.Subscriber(self.id + '/Charge_cntl/feedback', fakeChargeMsg, self.charging_cb)
+        rospy.Subscriber(self.id + '/Beacon_cntl/feedback', fakeBeaconMsg, self.beacon_cb)
         self.charging = False
         self.beacon_on = False
         self.connected = False
