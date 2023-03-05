@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import rospy
 from msg_pkg.srv import masterConnect, masterConnectResponse
 from msg_pkg.msg import uiMasterList
