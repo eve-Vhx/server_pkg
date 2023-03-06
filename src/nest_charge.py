@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import rospy
 import actionlib
-from msg_pkg.msg import NestChargeAction, NestChargeGoal
+from msg_pkg.msg import NestChargeAction, NestChargeGoal, NestChargeFeedback
 from msg_pkg.srv import nestChargeUi, nestChargeUiResponse
 
 class NestCharge:
@@ -10,7 +10,7 @@ class NestCharge:
         self.success = False
 
     def handle_charge_cb(self,req):
-        self.charge_action_client = actionlib.SimpleActionClient(req.id + 'Charge_ctrl', NestChargeAction)
+        self.charge_action_client = actionlib.SimpleActionClient(req.id + '/Charge_cntl', NestChargeAction)
         if(self.charge_action_client.wait_for_server(timeout=rospy.Duration(5.0))):
             self.charge_goal = NestChargeGoal(charge_drone=req.charge)
             self.charge_action_client.send_goal(self.charge_goal)
