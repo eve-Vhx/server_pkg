@@ -25,7 +25,7 @@ class DroneConnection:
         self.px4 = False
         self.mavros = False
         self.connected = False
-        self.drone_connecter_feedback = rospy.Publisher(self.id + "drone_connecter_feedback", feedbackMsg, queue_size=10)
+        self.drone_connecter_feedback = rospy.Publisher(self.id + "/drone_connecter_feedback", feedbackMsg, queue_size=10)
         self.drone_telem_pub = rospy.Publisher(req.id + "/ui_telem_data", telemMsg, queue_size=10)
 
         #MAVROS telemetry data

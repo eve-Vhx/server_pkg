@@ -16,7 +16,7 @@ class NestConnection:
         self.charging = False
         self.beacon_on = False
         self.connected = False
-        self.nest_telem_pub = rospy.Publisher(self.id + 'ui_nest_telem', nestTelemMsg, queue_size=10)
+        self.nest_telem_pub = rospy.Publisher(self.id + '/ui_nest_telem', nestTelemMsg, queue_size=10)
         self.publish_nest_data()
 
         return masterConnectResponse(True)
