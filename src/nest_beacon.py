@@ -12,7 +12,7 @@ class NestBeacon:
     def handle_beacon_cb(self,req):
         self.beacon_action_client = actionlib.SimpleActionClient(req.id + '/Beacon_cntl', NestBeaconAction)
         if(self.beacon_action_client.wait_for_server(timeout=rospy.Duration(5.0))):
-            self.beacon_goal = BeaconChargeGoal(beacon_state=req.beacon_on)
+            self.beacon_goal = NestBeaconGoal(beacon_state=req.beacon_on)
             self.beacon_action_client.send_goal(self.beacon_goal)
             self.success = True
             print("Sending the beacon request through")
