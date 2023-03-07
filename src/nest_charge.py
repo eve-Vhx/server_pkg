@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import rospy
 import actionlib
-from msg_pkg.msg import NestChargeAction, NestChargeGoal
+from msg_pkg.msg import NestChargeAction, NestChargeGoal, NestChargeFeedback
 from msg_pkg.srv import nestChargeUi, nestChargeUiResponse
 
 class NestCharge:

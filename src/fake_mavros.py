@@ -15,8 +15,8 @@ def run_fake_mavros():
         fake_vel_msg = TwistStamped()
         fake_batt_msg = BatteryState()
 
-        fake_gps_msg.lat = random.randint(300000000,310000000)
-        fake_gps_msg.lon = random.randint(-980000000,-970000000)
+        fake_gps_msg.lat = random.randint(303910000,303920000)
+        fake_gps_msg.lon = random.randint(-977270000,-977170000)
         fake_gps_msg.alt = random.randint(240000,241000)
         fake_state_msg.mode = 'POSCTL'
         fake_state_msg.armed = False
