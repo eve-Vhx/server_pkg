@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 import rospy
 from msg_pkg.srv import masterConnect, masterConnectResponse
-from msg_pkg.msg import NestBeaconFeedback, NestChargeFeedback
+from msg_pkg.msg import NestBeaconActionFeedback, NestChargeActionFeedback
 from msg_pkg.msg import nestTelemMsg, fakeChargeMsg, fakeBeaconMsg
+
 
 class NestConnection:
     def __init__(self, id):
@@ -11,8 +12,8 @@ class NestConnection:
     def run_routine(self,req):
         print("Nest connection node called with id: " + req.id)
         self.id = req.id
-        rospy.Subscriber(self.id + '/Charge_cntl/feedback', fakeChargeMsg, self.charging_cb)
-        rospy.Subscriber(self.id + '/Beacon_cntl/feedback', fakeBeaconMsg, self.beacon_cb)
+        rospy.Subscriber(self.id + '/Charge_cntl/feedback', NestChargeActionFeedback, self.charging_cb)
+        rospy.Subscriber(self.id + '/Beacon_cntl/feedback', NestBeaconActionFeedback, self.beacon_cb)
         self.charging = False
         self.beacon_on = False
         self.connected = False
@@ -22,10 +23,10 @@ class NestConnection:
         return masterConnectResponse(True)
 
     def charging_cb(self,msg):
-        self.charging = msg.charging
-
+        self.charging = msg.feedback.charging
+       
     def beacon_cb(self,msg):
-        self.beacon_on = msg.beacon_on
+        self.beacon_on = msg.feedback.beacon_on
 
     def publish_nest_data(self):
         while (not rospy.is_shutdown()):
@@ -33,7 +34,5 @@ class NestConnection:
             nest_telem_msg.charging = self.charging
             nest_telem_msg.beacon = self.beacon_on
             nest_telem_msg.connected = self.connected
-
             self.nest_telem_pub.publish(nest_telem_msg)
             rospy.sleep(1)
-
