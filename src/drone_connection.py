@@ -10,6 +10,7 @@ from mavros_msgs.msg import State
 from sensor_msgs.msg import Range
 from geometry_msgs.msg import TwistStamped
 from sensor_msgs.msg import BatteryState
+from std_msgs.msg import Float64
 
 import threading
 
@@ -49,11 +50,16 @@ class DroneConnection:
         self.mavros_telem_battery = {
             "battery_percent" : 0
         }
+
+        self.mavros_telem_compass = {
+            "hdg" : 0
+        }
         rospy.Subscriber(self.id + "/mavros/gpsstatus/gps1/raw", GPSRAW, self.mavros_gps_cb)
         rospy.Subscriber(self.id + "/mavros/state", State, self.mavros_state_cb)
         rospy.Subscriber(self.id + "/mavros/distance_sensor/hrlv_ez4_pub", Range, self.mavros_distancez_cb)
         rospy.Subscriber(self.id + "/mavros/setpoint_velocity/cmd_vel", TwistStamped, self.mavros_vel_cb)
         rospy.Subscriber(self.id + "/mavros/battery", BatteryState, self.mavros_battery_cb)
+        rospy.Subscriber(self.id + "/mavros/global_position/compass_hdg", Float64, self.mavros_compass_cb)
 
         self.timer.start()
 
@@ -111,6 +117,11 @@ class DroneConnection:
             "battery_percent" : data.percentage
         }
 
+    def mavros_compass_cb(self,data):
+        self.mavros_telem_compass = {
+            "hdg" : data.data
+        }
+
     def publish_telem_data(self):
         while(not rospy.is_shutdown()):
             ui_telem_msg = telemMsg()
@@ -124,6 +135,7 @@ class DroneConnection:
             ui_telem_msg.vel_y = self.mavros_telem_vel["vel_y"]
             ui_telem_msg.vel_z = self.mavros_telem_vel["vel_z"]
             ui_telem_msg.battery = self.mavros_telem_battery["battery_percent"]
+            ui_telem_msg.compass = self.mavros_telem_compass["hdg"]
             ui_telem_msg.connected = self.connected
             ui_telem_msg.mavros = self.mavros
             ui_telem_msg.px4 = self.px4
