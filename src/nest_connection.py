@@ -23,23 +23,16 @@ class NestConnection:
         return masterConnectResponse(True)
 
     def charging_cb(self,msg):
-        self.charging = msg.charging
-        nest_telem_msg = nestTelemMsg()
-        nest_telem_msg.charging = self.charging
-        nest_telem_msg.beacon = self.beacon_on
-        nest_telem_msg.connected = self.connected
-        self.nest_telem_pub.publish(nest_telem_msg)
-        print(msg)
-
+        self.charging = msg.feedback.charging
+       
     def beacon_cb(self,msg):
-        self.beacon_on = msg.beacon_on
+        self.beacon_on = msg.feedback.beacon_on
 
     def publish_nest_data(self):
         while (not rospy.is_shutdown()):
-           rospy.spin()
-            #try:
-            #    rospy.wait_for_message(self.id+'/Charge_cntl/feedback', NestChargeFeedback, timeout=0.5)
-            #except:
-            #    print("no msg")
-
-
+            nest_telem_msg = nestTelemMsg()
+            nest_telem_msg.charging = self.charging
+            nest_telem_msg.beacon = self.beacon_on
+            nest_telem_msg.connected = self.connected
+            self.nest_telem_pub.publish(nest_telem_msg)
+            rospy.sleep(1)
