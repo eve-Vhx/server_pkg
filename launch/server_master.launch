@@ -5,6 +5,5 @@
 	<node pkg="server_pkg" name="drone_mission_node" type="drone_mission.py" output="screen" respawn="true"></node>
 	<include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"> 
      <arg name="port" value="9090"/>
-	 <arg name="respawn" value="true"/>
   	</include>
 </launch>
