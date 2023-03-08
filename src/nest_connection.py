@@ -50,6 +50,9 @@ class NestConnection:
             nest_telem_msg.charging = self.charging
             nest_telem_msg.beacon = self.beacon_on
             nest_telem_msg.connected = self.connected
+            nest_telem_msg.lat = self.gps[0]
+            nest_telem_msg.lon = self.gps[1]
+            nest_telem_msg.alt = self.gps[2]
             self.nest_telem_pub.publish(nest_telem_msg)
             print(self.gps)
             rospy.sleep(1)
