@@ -10,7 +10,6 @@ import threading
 
 class NestConnection:
     def __init__(self, id):
-        self.timer = threading.Timer(8,self.timeout)
         self.nest_connect_service = rospy.Service(id + 'nest_telem_connect', masterConnect, self.run_routine)
 
     def run_routine(self,req):
@@ -29,20 +28,6 @@ class NestConnection:
 
         return masterConnectResponse(True)
 
-    def timeout(self):
-        self.timer.cancel()
-        if(rospy.wait_for_service('/' + self.id + '/nest_gps', timeout=rospy.Duration(2.0))):
-            rospy.loginfo("Going to call nest GPS update")
-            try:
-                gps_client = rospy.ServiceProxy('/' + self.id + '/nest_gps', NestGPSMessage)
-                gps_res = gps_client()
-                self.gps = [gps_res.latitude, gps_res.longitude, gps_res.altitude]
-            except rospy.ServiceException as e:
-                print("GPS Service call failed: %s"%e)
-        else:
-            rospy.loginfo("Nest gps call timed out")
-        self.timer.start()
-
     def charging_cb(self,msg):
         self.charging = msg.feedback.charging
        
@@ -59,5 +44,15 @@ class NestConnection:
             nest_telem_msg.lon = self.gps[1]
             nest_telem_msg.alt = self.gps[2]
             self.nest_telem_pub.publish(nest_telem_msg)
-            print(self.gps)
+
+            if(rospy.wait_for_service('/' + self.id + '/nest_gps', timeout=rospy.Duration(2.0))):
+                rospy.loginfo("Going to call nest GPS update")
+                try:
+                    gps_client = rospy.ServiceProxy('/' + self.id + '/nest_gps', NestGPSMessage)
+                    gps_res = gps_client()
+                    self.gps = [gps_res.latitude, gps_res.longitude, gps_res.altitude]
+                except rospy.ServiceException as e:
+                    print("GPS Service call failed: %s"%e)
+            else:
+                rospy.loginfo("Nest gps call timed out")
             rospy.sleep(1)
