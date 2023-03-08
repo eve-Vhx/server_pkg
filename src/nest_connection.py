@@ -10,7 +10,7 @@ import threading
 
 class NestConnection:
     def __init__(self, id):
-        self.timer = threading.Timer(5,self.timeout)
+        self.timer = threading.Timer(8,self.timeout)
         self.nest_connect_service = rospy.Service(id + 'nest_telem_connect', masterConnect, self.run_routine)
 
     def run_routine(self,req):
