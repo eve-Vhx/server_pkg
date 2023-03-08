@@ -30,14 +30,17 @@ class NestConnection:
         return masterConnectResponse(True)
 
     def timeout(self):
-        rospy.wait_for_service(self.id + '/nest_gps', timeout=rospy.Duration(2.0))
         self.timer.cancel()
-        try:
-            gps_client = rospy.ServiceProxy(self.id + '/nest_gps', NestGPSMessage)
-            gps_res = gps_client()
-            self.gps = [gps_res.latitude, gps_res.longitude, gps_res.altitude]
-        except rospy.ServiceException as e:
-            print("GPS Service call failed: %s"%e)
+        if(rospy.wait_for_service('/' + self.id + '/nest_gps', timeout=rospy.Duration(2.0))):
+            rospy.loginfo("Going to call nest GPS update")
+            try:
+                gps_client = rospy.ServiceProxy('/' + self.id + '/nest_gps', NestGPSMessage)
+                gps_res = gps_client()
+                self.gps = [gps_res.latitude, gps_res.longitude, gps_res.altitude]
+            except rospy.ServiceException as e:
+                print("GPS Service call failed: %s"%e)
+        else:
+            rospy.loginfo("Nest gps call timed out")
         self.timer.start()
 
     def charging_cb(self,msg):
